@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Referral Team - Easy IncomeX</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-teal: #0ba381;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: calc(85px + var(--safe-bottom)); }
+    .header { background: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+    .page-title { font-size: 17px; font-weight: 700; }
+    .container { padding: 18px; max-width: 500px; margin: 0 auto; }
+    .hero {
+      background: linear-gradient(135deg, #0ba381 0%, #057a60 100%);
+      color: #fff;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 24px rgba(11, 163, 129, 0.22);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .hero-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .hero-sub { font-size: 13px; opacity: 0.9; margin-bottom: 16px; }
+    .stats-row { display: flex; justify-content: space-around; background: rgba(255,255,255,0.15); border-radius: 16px; padding: 12px; }
+    .stat-box strong { font-size: 18px; display: block; font-weight: 800; }
+    .stat-box span { font-size: 11px; opacity: 0.8; }
+    
+    .card { background: #ffffff; border-radius: 20px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+    .link-box { display: flex; gap: 8px; margin-bottom: 12px; }
+    .link-input { flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; background: #f8fafc; color: var(--text-main); font-weight: 600; }
+    .btn-copy { background: var(--primary-teal); color: #fff; border: none; border-radius: 12px; padding: 0 18px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background-color 0.2s ease; }
+    .btn-share { width: 100%; padding: 14px; background: #0284c7; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    
+    .team-member { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .team-member:last-child { border-bottom: none; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; height: 68px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: var(--safe-bottom); z-index: 900; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; font-size: 11px; font-weight: 600; gap: 4px; width: 18%; }
+    .nav-item.active { color: var(--primary-teal); }
+    .nav-home-btn { position: relative; top: -16px; background: linear-gradient(135deg, #0ba381 0%, #057a60 100%); width: 54px; height: 54px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ffffff !important; box-shadow: 0 8px 18px rgba(11, 163, 129, 0.4); border: 3px solid #ffffff; }
+    .nav-home-btn span { font-size: 9px; font-weight: 800; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="page-title">Referral Team</div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <div class="hero-title">Invite & Earn</div>
+      <div class="hero-sub" id="referralRuleDesc">Earn continuous bonuses for each active team referral.</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <strong id="totalInvited">0</strong>
+          <span>Team Size</span>
+        </div>
+        <div class="stat-box">
+          <strong id="referralEarnings">৳ 0.00</strong>
+          <span>Total Commission</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Your Exclusive Referral Link</div>
+      <div class="link-box">
+        <input type="text" id="refLinkInput" class="link-input" readonly value="Loading referral link...">
+        <button class="btn-copy" id="copyBtn">Copy</button>
+      </div>
+      <button class="btn-share" id="shareBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .26z"/></svg>
+        Share on Telegram
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recent Referral Activity</div>
+      <div id="referralsList">
+        <p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 10px 0;">No team members registered yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="help.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <span>Help</span>
+    </a>
+    <a href="wallet.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+      <span>Wallet</span>
+    </a>
+    <a href="index.html" class="nav-item nav-home-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>HOME</span>
+    </a>
+    <a href="team.html" class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Team</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+      authDomain: "easy-incomex.firebaseapp.com",
+      projectId: "easy-incomex",
+      storageBucket: "easy-incomex.firebasestorage.app",
+      messagingSenderId: "783518185444",
+      appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+      measurementId: "G-V63PKF0Q9N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.ready();
+    const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
+
+    let botUsername = "EasyIncomeX_bot";
+
+    // Global & Referral Settings Listener (Syncs from both settings/referral and settings/global)
+    const syncReferralSettings = (s) => {
+      if (!s) return;
+      if (s.botUsername) {
+        botUsername = s.botUsername.replace(/^@/, "").trim();
+      }
+      const refLink = `https://t.me/${botUsername}?start=ref_${currentUserId}`;
+      document.getElementById("refLinkInput").value = refLink;
+
+      const reward = s.bonusAmount !== undefined ? s.bonusAmount : s.referralReward;
+      if (reward !== undefined && reward !== null) {
+        document.getElementById("referralRuleDesc").textContent = `Earn ৳ ${Number(reward).toFixed(2)} when your friend completes onboarding!`;
+      }
+    };
+
+    onSnapshot(doc(db, "settings", "referral"), (snap) => {
+      if (snap.exists()) syncReferralSettings(snap.data());
+    });
+    onSnapshot(doc(db, "settings", "global"), (snap) => {
+      if (snap.exists()) syncReferralSettings(snap.data());
+    });
+
+    // Referrals Performance Listener
+    const q = query(collection(db, "users"), where("referrerId", "==", currentUserId));
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById("referralsList");
+      document.getElementById("totalInvited").textContent = snapshot.size;
+
+      if (snapshot.empty) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 10px 0;">No team members registered yet.</p>`;
+        return;
+      }
+      container.innerHTML = "";
+      snapshot.forEach(docSnap => {
+        const u = docSnap.data();
+        const dateStr = u.createdAt ? new Date(u.createdAt.seconds * 1000).toLocaleDateString() : "Active";
+        const div = document.createElement("div");
+        div.className = "team-member";
+        div.innerHTML = `
+          <div>
+            <div style="font-weight: 700;">${u.displayName || "Member"}</div>
+            <div style="color: var(--text-muted); font-size: 11px;">Joined: ${dateStr}</div>
+          </div>
+          <span style="font-weight:700; color: var(--primary-teal);">Active</span>
+        `;
+        container.appendChild(div);
+      });
+    });
+
+    // Reliable copy helper that works in WebViews, Telegram WebApp, and all browsers
+    function copyTextToClipboard(text) {
+      if (!text || text.includes("Loading")) return;
+
+      const onCopySuccess = () => {
+        const btn = document.getElementById("copyBtn");
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        btn.style.backgroundColor = "#059669";
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.backgroundColor = "";
+        }, 1500);
+        alert("Referral link copied to clipboard!");
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(onCopySuccess).catch(() => {
+          fallbackCopyText(text, onCopySuccess);
+        });
+      } else {
+        fallbackCopyText(text, onCopySuccess);
+      }
+    }
+
+    function fallbackCopyText(text, callback) {
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        textArea.setAttribute("readonly", "");
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand("copy");
+        document.body.removeChild(textArea);
+        if (successful && callback) {
+          callback();
+        } else if (!successful) {
+          prompt("Copy manually:", text);
+        }
+      } catch (err) {
+        prompt("Copy manually:", text);
+      }
+    }
+
+    // Copy Referral Link Handler
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      const input = document.getElementById("refLinkInput");
+      copyTextToClipboard(input.value.trim());
+    });
+
+    // Telegram Share Link Handler
+    document.getElementById("shareBtn").addEventListener("click", () => {
+      const url = document.getElementById("refLinkInput").value;
+      const shareText = encodeURIComponent("Join Easy IncomeX and earn daily revenue directly to your wallet! 🚀");
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${shareText}`, "_blank");
+    });
+  </script>
+</body>
+</html>

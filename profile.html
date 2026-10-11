@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>User Profile - Easy IncomeX</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-teal: #0ba381;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: calc(85px + var(--safe-bottom)); }
+    .header { background: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+    .page-title { font-size: 17px; font-weight: 700; }
+    .container { padding: 18px; max-width: 500px; margin: 0 auto; }
+    
+    .profile-card { background: #ffffff; border-radius: 20px; padding: 24px 20px; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.03); margin-bottom: 18px; }
+    .avatar { width: 72px; height: 72px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; margin: 0 auto 12px auto; }
+    .user-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .user-tag { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .status-badge { display: inline-block; background: #dcfce7; color: #15803d; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+
+    .card { background: #ffffff; border-radius: 20px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--text-muted); }
+    .info-val { font-weight: 700; }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; height: 68px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: var(--safe-bottom); z-index: 900; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; font-size: 11px; font-weight: 600; gap: 4px; width: 18%; }
+    .nav-item.active { color: var(--primary-teal); }
+    .nav-home-btn { position: relative; top: -16px; background: linear-gradient(135deg, #0ba381 0%, #057a60 100%); width: 54px; height: 54px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ffffff !important; box-shadow: 0 8px 18px rgba(11, 163, 129, 0.4); border: 3px solid #ffffff; }
+    .nav-home-btn span { font-size: 9px; font-weight: 800; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="page-title">Profile</div>
+  </div>
+
+  <div class="container">
+    <div class="profile-card">
+      <div class="avatar" id="avatarBox">U</div>
+      <div class="user-name" id="profileName">User Name</div>
+      <div class="user-tag" id="profileUsername">@username</div>
+      <div class="status-badge" id="accountStatus">Verified Mini App Member</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Account Information</div>
+      <div class="info-row">
+        <span class="info-label">Telegram UID</span>
+        <span class="info-val" id="profileTgId">--</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Registration Date</span>
+        <span class="info-val" id="profileJoined">--</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Invited By</span>
+        <span class="info-val" id="profileReferrer">Direct Registration</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Security & Terms</div>
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+        Your identity is verified directly through Telegram cryptographic signatures. Never share third-party credentials or OTP codes.
+      </p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="help.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <span>Help</span>
+    </a>
+    <a href="wallet.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+      <span>Wallet</span>
+    </a>
+    <a href="index.html" class="nav-item nav-home-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>HOME</span>
+    </a>
+    <a href="team.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Team</span>
+    </a>
+    <a href="profile.html" class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+  authDomain: "easy-incomex.firebaseapp.com",
+  projectId: "easy-incomex",
+  storageBucket: "easy-incomex.firebasestorage.app",
+  messagingSenderId: "783518185444",
+  appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+  measurementId: "G-V63PKF0Q9N"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.ready();
+    const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
+
+    onSnapshot(doc(db, "users", currentUserId), (snap) => {
+      if (snap.exists()) {
+        const u = snap.data();
+        document.getElementById("profileName").textContent = u.displayName || "Telegram User";
+        document.getElementById("profileUsername").textContent = u.username ? `@${u.username}` : `@id${currentUserId}`;
+        document.getElementById("profileTgId").textContent = currentUserId;
+        document.getElementById("profileJoined").textContent = u.createdAt ? new Date(u.createdAt.seconds * 1000).toLocaleDateString() : "Active";
+        document.getElementById("profileReferrer").textContent = u.referrerId ? `ID #${u.referrerId}` : "None";
+        if (u.photoUrl) {
+          document.getElementById("avatarBox").innerHTML = `<img src="${u.photoUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+        } else {
+          document.getElementById("avatarBox").textContent = (u.displayName || "U").charAt(0).toUpperCase();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

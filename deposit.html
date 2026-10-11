@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Deposit Money - Easy IncomeX</title>
+  
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-teal: #0ba381;
+      --primary-gradient: linear-gradient(135deg, #0ba381 0%, #057a60 100%);
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: calc(85px + var(--safe-bottom));
+    }
+
+    /* Top Header */
+    .top-header {
+      background: #ffffff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .container {
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Live Balance Hero Card */
+    .balance-hero-card {
+      background: var(--primary-gradient);
+      border-radius: 24px;
+      padding: 22px 20px;
+      color: #ffffff;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(11, 163, 129, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .balance-subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.85;
+      margin-bottom: 4px;
+    }
+
+    .balance-amount {
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .balance-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Card Wrapper */
+    .content-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .card-heading {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Modern Interactive Gateway Grid */
+    .gateway-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .gateway-card {
+      background: #f8fafc;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .gateway-card.active {
+      border-color: var(--primary-teal);
+      background: #ecfdf5;
+      box-shadow: 0 4px 14px rgba(11, 163, 129, 0.18);
+    }
+
+    .gateway-icon-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .gateway-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Active Gateway Info Box */
+    .active-payment-panel {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .active-panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .active-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .active-type-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      background: #e2e8f0;
+      color: var(--text-main);
+      border-radius: 20px;
+    }
+
+    .active-number-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .active-number-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: 0.8px;
+    }
+
+    .copy-main-btn {
+      background: var(--primary-teal);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-main-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Instruction Note */
+    .instruction-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      background: #eff6ff;
+      border-left: 3px solid #3b82f6;
+      padding: 10px 12px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 16px;
+    }
+
+    /* Form Components */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 14px;
+      background: #f8fafc;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-teal);
+      background: #ffffff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary-teal);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(11, 163, 129, 0.25);
+    }
+
+    /* Deposit History Items */
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .history-item:last-child { border-bottom: none; }
+
+    .history-title { font-size: 13px; font-weight: 700; text-transform: capitalize; }
+    .history-meta { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+    .pill-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .pill-pending { background: #fef3c7; color: #d97706; }
+    .pill-approved { background: #dcfce7; color: #15803d; }
+    .pill-rejected { background: #fee2e2; color: #b91c1c; }
+
+    /* Animated Toast Notification */
+    .toast-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 3000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Bottom Navigation Styles */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      height: 68px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-bottom: var(--safe-bottom);
+      z-index: 900;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      width: 18%;
+    }
+
+    .nav-item svg { stroke: #94a3b8; }
+
+    .nav-home-btn {
+      position: relative;
+      top: -16px;
+      background: var(--primary-gradient);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff !important;
+      border: 3px solid #ffffff;
+      box-shadow: 0 8px 18px rgba(11, 163, 129, 0.4);
+      gap: 1px;
+    }
+
+    .nav-home-btn svg { stroke: none; fill: #ffffff; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Toast Notification -->
+  <div class="toast-msg" id="toastMsg">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastText">Number copied!</span>
+  </div>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <a href="index.html" class="back-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Back
+    </a>
+    <div class="header-title">Deposit Money</div>
+    <div style="width: 48px;"></div>
+  </header>
+
+  <div class="container">
+    <!-- Live Balance Card -->
+    <div class="balance-hero-card">
+      <div>
+        <div class="balance-subtitle">Available Main Balance</div>
+        <div class="balance-amount" id="userBalanceDisplay">৳ 0.00</div>
+      </div>
+      <div class="balance-badge">Instant Auto-Sync</div>
+    </div>
+
+    <!-- Interactive Payment Gateway Box -->
+    <div class="content-card">
+      <div class="card-heading">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        Select Gateway & Send Money
+      </div>
+
+      <!-- 3 Gateway Selector Buttons -->
+      <div class="gateway-grid">
+        <div class="gateway-card active" data-gateway="bkash" onclick="selectGateway('bkash')">
+          <div class="gateway-icon-badge" style="background: #e2136e;">bK</div>
+          <div class="gateway-label">bKash</div>
+        </div>
+        <div class="gateway-card" data-gateway="nagad" onclick="selectGateway('nagad')">
+          <div class="gateway-icon-badge" style="background: #f7941d;">NG</div>
+          <div class="gateway-label">Nagad</div>
+        </div>
+        <div class="gateway-card" data-gateway="rocket" onclick="selectGateway('rocket')">
+          <div class="gateway-icon-badge" style="background: #8c3494;">RK</div>
+          <div class="gateway-label">Rocket</div>
+        </div>
+      </div>
+
+      <!-- Active Selected Gateway Display & Copy Box -->
+      <div class="active-payment-panel">
+        <div class="active-panel-top">
+          <div class="active-title" id="activeGatewayTitle">
+            <span id="gatewayDot" style="color: #e2136e;">●</span> bKash Personal Number
+          </div>
+          <div class="active-type-pill">Send Money</div>
+        </div>
+        <div class="active-number-row">
+          <div class="active-number-val" id="activeGatewayNumber">01700000000</div>
+          <button class="copy-main-btn" id="copyBtn" onclick="copyCurrentNumber()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="instruction-note">
+        উপরের নাম্বারে <strong>Send Money</strong> করে নিচের ফর্মে ট্রানজেকশন আইডি (TrxID) ও প্রেরকের নাম্বার সাবমিট করুন। অ্যাডমিন একসেপ্ট করলেই সাথে সাথে ব্যালেন্সে টাকা যুক্ত হবে।
+      </div>
+    </div>
+
+    <!-- Deposit Request Submission Form -->
+    <div class="content-card">
+      <div class="card-heading">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Submit Deposit Details
+      </div>
+
+      <form id="depositForm">
+        <!-- Hidden input tracking active gateway -->
+        <input type="hidden" id="selectedGatewayInput" value="bkash">
+
+        <div class="form-group">
+          <label class="form-label" for="depositAmount">Deposit Amount (৳)</label>
+          <input type="number" id="depositAmount" class="form-input" placeholder="e.g. 500" min="10" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="senderNumber">Sender Mobile Number</label>
+          <input type="tel" id="senderNumber" class="form-input" placeholder="e.g. 017XXXXXXXX" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="transactionId">Transaction ID (TrxID)</label>
+          <input type="text" id="transactionId" class="form-input" placeholder="e.g. BCD78291XY" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Submit Deposit Request</button>
+      </form>
+    </div>
+
+    <!-- Recent Deposit History -->
+    <div class="content-card">
+      <div class="card-heading">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Recent Deposits
+      </div>
+      <div id="depositHistoryList">
+        <p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0;">Loading deposits...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation matching Home Page Exactly -->
+  <nav class="bottom-nav">
+    <a href="help.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <span>Help</span>
+    </a>
+
+    <a href="wallet.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+        <line x1="2" y1="10" x2="22" y2="10"></line>
+      </svg>
+      <span>Wallet</span>
+    </a>
+
+    <a href="index.html" class="nav-item nav-home-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      <span style="font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">HOME</span>
+    </a>
+
+    <a href="team.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <span>Team</span>
+    </a>
+
+    <a href="profile.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <!-- Gateway Data & Copy Scripts -->
+  <script>
+    const gatewayData = {
+      bkash: { name: "bKash Personal Number", dotColor: "#e2136e", number: "01700000000" },
+      nagad: { name: "Nagad Personal Number", dotColor: "#f7941d", number: "01800000000" },
+      rocket: { name: "Rocket Personal Number", dotColor: "#8c3494", number: "01900000000" }
+    };
+
+    let activeGatewayKey = "bkash";
+    let currentMinDeposit = 10;
+
+    // Switch Gateway Tab
+    function selectGateway(key) {
+      activeGatewayKey = key;
+      document.querySelectorAll(".gateway-card").forEach(c => c.classList.remove("active"));
+      document.querySelector(`[data-gateway="${key}"]`).classList.add("active");
+
+      const item = gatewayData[key];
+      document.getElementById("activeGatewayTitle").innerHTML = `<span style="color: ${item.dotColor};">●</span> ${item.name}`;
+      document.getElementById("activeGatewayNumber").textContent = item.number;
+      document.getElementById("selectedGatewayInput").value = key;
+    }
+
+    // 100% Guaranteed Working Copy Handler
+    function copyCurrentNumber() {
+      const num = document.getElementById("activeGatewayNumber").textContent.trim();
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(num).then(() => {
+          showCopySuccess(num);
+        }).catch(() => {
+          fallbackCopy(num);
+        });
+      } else {
+        fallbackCopy(num);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      textArea.style.top = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        showCopySuccess(text);
+      } catch (err) {
+        prompt("Copy number manually:", text);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function showCopySuccess(num) {
+      const btn = document.getElementById("copyBtn");
+      btn.innerHTML = `✓ Copied`;
+      btn.style.background = "#059669";
+
+      const toast = document.getElementById("toastMsg");
+      document.getElementById("toastText").textContent = `Copied: ${num}`;
+      toast.classList.add("show");
+
+      if (window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+      }
+
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> <span>Copy</span>`;
+        btn.style.background = "var(--primary-teal)";
+        toast.classList.remove("show");
+      }, 2000);
+    }
+  </script>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      onSnapshot, 
+      collection, 
+      query, 
+      where, 
+      addDoc, 
+      serverTimestamp,
+      runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+      authDomain: "easy-incomex.firebaseapp.com",
+      projectId: "easy-incomex",
+      storageBucket: "easy-incomex.firebasestorage.app",
+      messagingSenderId: "783518185444",
+      appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+      measurementId: "G-V63PKF0Q9N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.ready();
+    const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
+
+    // 1. Real-time Live Wallet Balance Listener
+    onSnapshot(doc(db, "wallets", currentUserId), (docSnap) => {
+      if (docSnap.exists()) {
+        const val = docSnap.data().availableBalance || 0;
+        document.getElementById("userBalanceDisplay").textContent = `৳ ${val.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+      }
+    });
+
+    // 2. Fetch Admin Payment Numbers & Min Deposit from both settings/finance and settings/deposit
+    const syncDepositSettings = (data) => {
+      if (!data) return;
+      if (data.bkash) gatewayData.bkash.number = data.bkash;
+      if (data.nagad) gatewayData.nagad.number = data.nagad;
+      if (data.rocket) gatewayData.rocket.number = data.rocket;
+
+      if (data.minDeposit !== undefined && data.minDeposit !== null && data.minDeposit !== "") {
+        currentMinDeposit = parseFloat(data.minDeposit) || 10;
+        const depInput = document.getElementById("depositAmount");
+        if (depInput) {
+          depInput.min = currentMinDeposit;
+          depInput.placeholder = `e.g. ${currentMinDeposit}`;
+        }
+      }
+
+      // Update currently displayed number
+      document.getElementById("activeGatewayNumber").textContent = gatewayData[activeGatewayKey].number;
+    };
+
+    onSnapshot(doc(db, "settings", "finance"), (docSnap) => {
+      if (docSnap.exists()) syncDepositSettings(docSnap.data());
+    });
+    onSnapshot(doc(db, "settings", "deposit"), (docSnap) => {
+      if (docSnap.exists()) syncDepositSettings(docSnap.data());
+    });
+
+    // 3. Real-time Deposit History & AUTO-CREDIT TO WALLET ON ADMIN ACCEPT
+    const depQuery = query(
+      collection(db, "depositRequests"),
+      where("userId", "==", currentUserId)
+    );
+
+    onSnapshot(depQuery, (snapshot) => {
+      const container = document.getElementById("depositHistoryList");
+      if (snapshot.empty) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0;">No deposit history found.</p>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      const deposits = [];
+
+      snapshot.forEach((d) => {
+        const data = d.data();
+        const depId = d.id;
+        deposits.push({ id: depId, ...data });
+
+        if (data.status === "approved" && !data.credited) {
+          syncApprovedDepositToWallet(depId, Number(data.amount));
+        }
+      });
+
+      deposits.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      deposits.forEach((item) => {
+        const dateStr = item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleDateString() : "Just now";
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+          <div>
+            <div class="history-title">${item.method} • ৳ ${Number(item.amount).toFixed(2)}</div>
+            <div class="history-meta">TrxID: ${item.transactionId} • ${dateStr}</div>
+          </div>
+          <span class="pill-badge pill-${item.status}">${item.status}</span>
+        `;
+        container.appendChild(div);
+      });
+    });
+
+    async function syncApprovedDepositToWallet(depositDocId, amount) {
+      try {
+        await runTransaction(db, async (transaction) => {
+          const depRef = doc(db, "depositRequests", depositDocId);
+          const walletRef = doc(db, "wallets", currentUserId);
+
+          const depDoc = await transaction.get(depRef);
+          if (!depDoc.exists() || depDoc.data().credited) {
+            return;
+          }
+
+          const walletDoc = await transaction.get(walletRef);
+          const currentBal = walletDoc.exists() ? (walletDoc.data().availableBalance || 0) : 0;
+          const newBal = currentBal + amount;
+
+          transaction.set(walletRef, { availableBalance: newBal }, { merge: true });
+          transaction.update(depRef, { 
+            credited: true, 
+            creditedAt: serverTimestamp() 
+          });
+        });
+        console.log("Deposit auto-credited successfully to wallet!");
+      } catch (err) {
+        console.error("Auto-credit transaction failed:", err);
+      }
+    }
+
+    // 4. Submit Deposit Request Form Handler
+    document.getElementById("depositForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const method = document.getElementById("selectedGatewayInput").value;
+      const amount = parseFloat(document.getElementById("depositAmount").value);
+      const sender = document.getElementById("senderNumber").value.trim();
+      const trxId = document.getElementById("transactionId").value.trim();
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+      if (amount < currentMinDeposit) {
+        alert(`Minimum deposit amount is ৳ ${currentMinDeposit}`);
+        return;
+      }
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Submitting Request...";
+
+      try {
+        await addDoc(collection(db, "depositRequests"), {
+          userId: currentUserId,
+          method: method,
+          amount: amount,
+          senderNumber: sender,
+          transactionId: trxId,
+          status: "pending",
+          credited: false,
+          createdAt: serverTimestamp()
+        });
+
+        alert("Deposit request submitted successfully! Once approved by admin, your balance will be credited instantly.");
+        e.target.reset();
+        selectGateway("bkash");
+      } catch (err) {
+        console.error("Deposit request failed:", err);
+        alert("Failed to submit deposit request. Please try again.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit Deposit Request";
+      }
+    });
+  </script>
+</body>
+</html>

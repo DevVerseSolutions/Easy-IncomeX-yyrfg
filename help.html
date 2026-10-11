@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Help & Support - Easy IncomeX</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-teal: #0ba381;
+      --primary-dark: #057a60;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: calc(85px + var(--safe-bottom)); }
+    .header { background: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+    .page-title { font-size: 17px; font-weight: 700; }
+    .container { padding: 18px; max-width: 500px; margin: 0 auto; }
+    
+    .card { background: #ffffff; border-radius: 20px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+    .faq-item { margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+    .faq-q { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .faq-a { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .input-control { width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 14px; outline: none; background: #f8fafc; }
+    .input-control:focus { border-color: var(--primary-teal); background: #ffffff; }
+    .btn-submit { width: 100%; padding: 14px; background: var(--primary-teal); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(11, 163, 129, 0.25); }
+
+    /* Support Conversation & Ticket Styles */
+    .ticket-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 8px;
+    }
+    .ticket-subject {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .ticket-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .badge-open { background: #fef3c7; color: #d97706; }
+    .badge-replied { background: #dbeafe; color: #1d4ed8; }
+    .badge-closed { background: #f1f5f9; color: #64748b; }
+
+    /* Conversation Message Bubbles */
+    .chat-thread {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px 0;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .msg-bubble {
+      max-width: 88%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .msg-user {
+      align-self: flex-end;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-admin {
+      align-self: flex-start;
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+      border-bottom-left-radius: 4px;
+    }
+    .msg-sender-tag {
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .msg-time {
+      font-size: 10px;
+      opacity: 0.75;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Inline Quick Reply Box */
+    .reply-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .reply-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 13px;
+      outline: none;
+      background: #f8fafc;
+    }
+    .reply-input:focus { border-color: var(--primary-teal); background: #ffffff; }
+    .btn-reply {
+      background: var(--primary-teal);
+      color: #ffffff;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; height: 68px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: var(--safe-bottom); z-index: 900; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; font-size: 11px; font-weight: 600; gap: 4px; width: 18%; }
+    .nav-item.active { color: var(--primary-teal); }
+    .nav-home-btn { position: relative; top: -16px; background: linear-gradient(135deg, #0ba381 0%, #057a60 100%); width: 54px; height: 54px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ffffff !important; box-shadow: 0 8px 18px rgba(11, 163, 129, 0.4); border: 3px solid #ffffff; }
+    .nav-home-btn span { font-size: 9px; font-weight: 800; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="page-title">Help & Support</div>
+  </div>
+
+  <div class="container">
+    <!-- FAQ Section -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Frequently Asked Questions
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How are service rewards calculated?</div>
+        <div class="faq-a">Each valid submission is reviewed by our operations team. Once verified, the exact reward configured by the system is credited to your balance.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What are the withdrawal fees?</div>
+        <div class="faq-a">Withdrawal processing includes an administrator-configured fee (typically 0% - 5%) to cover payment gateway costs. The net calculation is clearly displayed prior to submitting.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">When will my payout arrive?</div>
+        <div class="faq-a">Withdrawals are processed manually via bKash, Nagad, or Binance Pay within 1 to 24 hours.</div>
+      </div>
+    </div>
+
+    <!-- Submit Ticket Form -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Submit a Support Ticket
+      </div>
+      <form id="ticketForm">
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" id="ticketSubject" class="input-control" placeholder="e.g. Withdrawal Inquiry or Account Help" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message Details</label>
+          <textarea id="ticketMessage" class="input-control" rows="3" placeholder="Describe your issue or question in detail..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit" id="ticketBtn">Submit Ticket</button>
+      </form>
+    </div>
+
+    <!-- Real-time Support Conversations & Replies -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-teal)" stroke-width="2.2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+        My Support Tickets & Chat
+      </div>
+      <div id="ticketsList">
+        <p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0;">Loading your support conversations...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="help.html" class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <span>Help</span>
+    </a>
+    <a href="wallet.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+      <span>Wallet</span>
+    </a>
+    <a href="index.html" class="nav-item nav-home-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>HOME</span>
+    </a>
+    <a href="team.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Team</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, doc, updateDoc, onSnapshot, query, where, serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+      authDomain: "easy-incomex.firebaseapp.com",
+      projectId: "easy-incomex",
+      storageBucket: "easy-incomex.firebasestorage.app",
+      messagingSenderId: "783518185444",
+      appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+      measurementId: "G-V63PKF0Q9N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.ready();
+    const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
+
+    // 1. Submit New Support Ticket
+    document.getElementById("ticketForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const subject = document.getElementById("ticketSubject").value.trim();
+      const message = document.getElementById("ticketMessage").value.trim();
+
+      const btn = document.getElementById("ticketBtn");
+      btn.disabled = true;
+      btn.textContent = "Sending Ticket...";
+
+      try {
+        const uName = tg?.initDataUnsafe?.user?.first_name || "User";
+        await addDoc(collection(db, "supportTickets"), {
+          userId: currentUserId,
+          userName: uName,
+          subject: subject,
+          message: message,
+          status: "pending",
+          conversation: [
+            {
+              sender: "user",
+              text: message,
+              senderName: uName,
+              createdAt: new Date().toISOString()
+            }
+          ],
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        alert("Support request ticket created! Our team will respond promptly.");
+        e.target.reset();
+      } catch (err) {
+        console.error(err);
+        alert("Unable to deliver ticket: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Submit Ticket";
+      }
+    });
+
+    // 2. Real-time Support Tickets & Replies Listener
+    const ticketsQ = query(
+      collection(db, "supportTickets"),
+      where("userId", "==", currentUserId)
+    );
+
+    onSnapshot(ticketsQ, (snapshot) => {
+      const container = document.getElementById("ticketsList");
+
+      if (snapshot.empty) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 12px 0;">No support tickets submitted yet.</p>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      const tickets = [];
+
+      snapshot.forEach((docSnap) => {
+        tickets.push({ id: docSnap.id, ...docSnap.data() });
+      });
+
+      // Sort by newest first
+      tickets.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      tickets.forEach((t) => {
+        const dateStr = t.createdAt ? new Date(t.createdAt.seconds * 1000).toLocaleString() : "Just now";
+        
+        let statusClass = "badge-open";
+        let statusText = t.status || "Open";
+        if (t.status === "replied") {
+          statusClass = "badge-replied";
+          statusText = "Admin Replied";
+        } else if (t.status === "closed") {
+          statusClass = "badge-closed";
+          statusText = "Closed";
+        }
+
+        // Build Messages Thread
+        let threadHTML = "";
+
+        // Check if ticket has conversation array
+        if (Array.isArray(t.conversation) && t.conversation.length > 0) {
+          t.conversation.forEach((msg) => {
+            const isUser = msg.sender === "user";
+            const timeStr = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "";
+            threadHTML += `
+              <div class="msg-bubble ${isUser ? 'msg-user' : 'msg-admin'}">
+                <div class="msg-sender-tag">
+                  ${isUser ? '👤 You' : '🛡️ Admin Support'}
+                </div>
+                <div>${escapeHTML(msg.text || "")}</div>
+                <div class="msg-time">${timeStr}</div>
+              </div>
+            `;
+          });
+        } else {
+          // Fallback to legacy single message + adminReply field
+          threadHTML += `
+            <div class="msg-bubble msg-user">
+              <div class="msg-sender-tag">👤 You</div>
+              <div>${escapeHTML(t.message || "")}</div>
+              <div class="msg-time">${dateStr}</div>
+            </div>
+          `;
+
+          if (t.adminReply || t.reply || t.answer) {
+            const adminTxt = t.adminReply || t.reply || t.answer;
+            threadHTML += `
+              <div class="msg-bubble msg-admin">
+                <div class="msg-sender-tag">🛡️ Admin Support</div>
+                <div>${escapeHTML(adminTxt)}</div>
+                <div class="msg-time">Response</div>
+              </div>
+            `;
+          }
+        }
+
+        const ticketDiv = document.createElement("div");
+        ticketDiv.className = "ticket-card";
+        ticketDiv.innerHTML = `
+          <div class="ticket-header">
+            <div>
+              <div class="ticket-subject">${escapeHTML(t.subject || "Support Inquiry")}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${dateStr}</div>
+            </div>
+            <span class="ticket-badge ${statusClass}">${statusText}</span>
+          </div>
+
+          <div class="chat-thread" id="thread-${t.id}">
+            ${threadHTML}
+          </div>
+
+          <form class="reply-box" onsubmit="handleSendReply(event, '${t.id}')">
+            <input type="text" id="replyInput-${t.id}" class="reply-input" placeholder="অ্যাডমিনকে রিপ্লাই লিখুন..." required>
+            <button type="submit" class="btn-reply" id="btnReply-${t.id}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              <span>পাঠান</span>
+            </button>
+          </form>
+        `;
+
+        container.appendChild(ticketDiv);
+
+        // Auto-scroll chat thread to bottom
+        setTimeout(() => {
+          const threadEl = document.getElementById(`thread-${t.id}`);
+          if (threadEl) threadEl.scrollTop = threadEl.scrollHeight;
+        }, 50);
+      });
+    });
+
+    // 3. Send Follow-up Reply to Admin
+    window.handleSendReply = async function(e, ticketId) {
+      e.preventDefault();
+      const input = document.getElementById(`replyInput-${ticketId}`);
+      const btn = document.getElementById(`btnReply-${ticketId}`);
+      const replyText = input.value.trim();
+
+      if (!replyText) return;
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>পাঠানো হচ্ছে...</span>`;
+
+      try {
+        const ticketRef = doc(db, "supportTickets", ticketId);
+        const uName = tg?.initDataUnsafe?.user?.first_name || "User";
+
+        const newMsg = {
+          sender: "user",
+          text: replyText,
+          senderName: uName,
+          createdAt: new Date().toISOString()
+        };
+
+        // Snapshot current conversation and append
+        const ticketDoc = await (await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js")).getDoc(ticketRef);
+        let conv = [];
+        if (ticketDoc.exists() && Array.isArray(ticketDoc.data().conversation)) {
+          conv = [...ticketDoc.data().conversation];
+        } else if (ticketDoc.exists()) {
+          // If legacy format, preserve initial question and admin reply
+          conv.push({
+            sender: "user",
+            text: ticketDoc.data().message || "",
+            createdAt: new Date().toISOString()
+          });
+          if (ticketDoc.data().adminReply) {
+            conv.push({
+              sender: "admin",
+              text: ticketDoc.data().adminReply,
+              createdAt: new Date().toISOString()
+            });
+          }
+        }
+        conv.push(newMsg);
+
+        await updateDoc(ticketRef, {
+          conversation: conv,
+          lastMessage: replyText,
+          status: "pending", // Notify admin that user has replied
+          updatedAt: serverTimestamp()
+        });
+
+        input.value = "";
+      } catch (err) {
+        console.error("Failed to send reply:", err);
+        alert("রিপ্লাই পাঠাতে ব্যর্থ হয়েছে: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span>পাঠান</span>
+        `;
+      }
+    };
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>

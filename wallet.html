@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Wallet - Easy IncomeX</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-teal: #0ba381;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: calc(85px + var(--safe-bottom)); }
+    .header { background: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+    .page-title { font-size: 17px; font-weight: 700; }
+    .container { padding: 18px; max-width: 500px; margin: 0 auto; }
+    .wallet-banner {
+      background: linear-gradient(135deg, #0ba381 0%, #057a60 100%);
+      color: #fff;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 24px rgba(11, 163, 129, 0.22);
+      margin-bottom: 20px;
+    }
+    .balance-sub { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; }
+    .balance-large { font-size: 32px; font-weight: 800; margin: 8px 0 16px 0; }
+    .wallet-metrics { display: flex; gap: 12px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px; }
+    .metric-col { flex: 1; }
+    .metric-col span { display: block; font-size: 11px; opacity: 0.8; }
+    .metric-col strong { font-size: 14px; font-weight: 700; }
+    
+    .card { background: #ffffff; border-radius: 20px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .input-control { width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 14px; outline: none; }
+    .input-control:focus { border-color: var(--primary-teal); }
+
+    .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+    .method-opt {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+    .method-opt.selected { border-color: var(--primary-teal); background: #f0fdf4; color: var(--primary-teal); }
+
+    .calc-breakdown {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .calc-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-muted); }
+    .calc-row.total { border-top: 1px dashed #cbd5e1; padding-top: 6px; font-weight: 700; color: var(--text-main); margin-bottom: 0; }
+
+    .btn-action { width: 100%; padding: 14px; background: var(--primary-teal); color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+    .tx-pending { background: #fef3c7; color: #d97706; }
+    .tx-paid { background: #dcfce7; color: #15803d; }
+    .tx-rejected { background: #fee2e2; color: #b91c1c; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; height: 68px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: var(--safe-bottom); z-index: 900; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #94a3b8; font-size: 11px; font-weight: 600; gap: 4px; width: 18%; }
+    .nav-item.active { color: var(--primary-teal); }
+    .nav-home-btn { position: relative; top: -16px; background: linear-gradient(135deg, #0ba381 0%, #057a60 100%); width: 54px; height: 54px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ffffff !important; box-shadow: 0 8px 18px rgba(11, 163, 129, 0.4); border: 3px solid #ffffff; }
+    .nav-home-btn span { font-size: 9px; font-weight: 800; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="page-title">Financial Wallet</div>
+  </div>
+
+  <div class="container">
+    <div class="wallet-banner">
+      <div class="balance-sub">Available Balance</div>
+      <div class="balance-large" id="availBalance">৳ 0.00</div>
+      <div class="wallet-metrics">
+        <div class="metric-col">
+          <span>Pending Payout</span>
+          <strong id="pendingBalance">৳ 0.00</strong>
+        </div>
+        <div class="metric-col">
+          <span>Total Withdrawn</span>
+          <strong id="totalWithdrawn">৳ 0.00</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request Withdrawal Form -->
+    <div class="card">
+      <div class="card-title">Request Withdrawal</div>
+      <form id="withdrawForm">
+        <div class="form-group">
+          <label class="form-label">Select Payment Method</label>
+          <div class="method-grid" id="methodGrid">
+            <div class="method-opt selected" data-method="bKash">bKash</div>
+            <div class="method-opt" data-method="Nagad">Nagad</div>
+            <div class="method-opt" data-method="Binance Pay">Binance Pay</div>
+            <div class="method-opt" data-method="USDT (TRC20)">USDT (TRC20)</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Receiving Address / Phone Number</label>
+          <input type="text" id="payoutAccount" class="input-control" placeholder="017xxxxxxxx or Binance Pay ID" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Withdrawal Amount (BDT)</label>
+          <input type="number" id="withdrawAmount" class="input-control" placeholder="Min. 50" min="50" step="any" required>
+        </div>
+
+        <div class="calc-breakdown">
+          <div class="calc-row">
+            <span>Requested Amount:</span>
+            <span id="breakdownReq">৳ 0.00</span>
+          </div>
+          <div class="calc-row">
+            <span>Gateway Service Fee (<span id="feePercentLabel">0%</span>):</span>
+            <span id="breakdownFee">৳ 0.00</span>
+          </div>
+          <div class="calc-row total">
+            <span>Estimated Net Payout:</span>
+            <span id="breakdownNet">৳ 0.00</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-action" id="withdrawBtn">Confirm & Request Payout</button>
+      </form>
+    </div>
+
+    <!-- Withdrawal History -->
+    <div class="card">
+      <div class="card-title">Withdrawal Transactions</div>
+      <div id="txHistory">
+        <p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 10px 0;">No withdrawal history.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="help.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <span>Help</span>
+    </a>
+    <a href="wallet.html" class="nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+      <span>Wallet</span>
+    </a>
+    <a href="index.html" class="nav-item nav-home-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>HOME</span>
+    </a>
+    <a href="team.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Team</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+      authDomain: "easy-incomex.firebaseapp.com",
+      projectId: "easy-incomex",
+      storageBucket: "easy-incomex.firebasestorage.app",
+      messagingSenderId: "783518185444",
+      appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+      measurementId: "G-V63PKF0Q9N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.ready();
+    const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
+
+    let currentFeePercentage = 5;
+    let minWithdrawal = 50;
+    let maxWithdrawal = 25000;
+    let selectedMethod = "bKash";
+    let userAvailableBalance = 0;
+
+    // Selection Handling
+    document.querySelectorAll(".method-opt").forEach(opt => {
+      opt.addEventListener("click", () => {
+        document.querySelectorAll(".method-opt").forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        selectedMethod = opt.getAttribute("data-method");
+      });
+    });
+
+    // Real-time Sync from both settings/finance and settings/global
+    const syncFinanceSettings = (d) => {
+      if (!d) return;
+      if (d.withdrawFee !== undefined) currentFeePercentage = Number(d.withdrawFee);
+      else if (d.withdrawalFeePercentage !== undefined) currentFeePercentage = Number(d.withdrawalFeePercentage);
+
+      if (d.minWithdraw !== undefined) minWithdrawal = Number(d.minWithdraw);
+      else if (d.minimumWithdrawal !== undefined) minWithdrawal = Number(d.minimumWithdrawal);
+
+      if (d.maxWithdrawal !== undefined) maxWithdrawal = Number(d.maxWithdrawal);
+
+      document.getElementById("feePercentLabel").textContent = `${currentFeePercentage}%`;
+      const amtInput = document.getElementById("withdrawAmount");
+      amtInput.min = minWithdrawal;
+      amtInput.placeholder = `Min. ${minWithdrawal}`;
+      recalculateFee();
+    };
+
+    onSnapshot(doc(db, "settings", "finance"), (snap) => {
+      if (snap.exists()) syncFinanceSettings(snap.data());
+    });
+    onSnapshot(doc(db, "settings", "global"), (snap) => {
+      if (snap.exists()) syncFinanceSettings(snap.data());
+    });
+
+    // Real-time Balance
+    onSnapshot(doc(db, "wallets", currentUserId), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        userAvailableBalance = Number(data.availableBalance) || 0;
+        const reserved = Number(data.reservedBalance) || 0;
+        const past = Number(data.totalWithdrawn) || 0;
+        document.getElementById("availBalance").textContent = `৳ ${userAvailableBalance.toFixed(2)}`;
+        document.getElementById("pendingBalance").textContent = `৳ ${reserved.toFixed(2)}`;
+        document.getElementById("totalWithdrawn").textContent = `৳ ${past.toFixed(2)}`;
+      }
+    });
+
+    // Transaction Calculation
+    const amountInput = document.getElementById("withdrawAmount");
+    amountInput.addEventListener("input", recalculateFee);
+
+    function recalculateFee() {
+      const val = parseFloat(amountInput.value) || 0;
+      const fee = (val * (currentFeePercentage / 100));
+      const net = Math.max(0, val - fee);
+
+      document.getElementById("breakdownReq").textContent = `৳ ${val.toFixed(2)}`;
+      document.getElementById("breakdownFee").textContent = `৳ ${fee.toFixed(2)}`;
+      document.getElementById("breakdownNet").textContent = `৳ ${net.toFixed(2)}`;
+    }
+
+    // Historical Withdrawals
+    const q = query(collection(db, "withdrawals"), where("userId", "==", currentUserId));
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById("txHistory");
+      if (snapshot.empty) {
+        container.innerHTML = `<p style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 10px 0;">No withdrawal history.</p>`;
+        return;
+      }
+      container.innerHTML = "";
+      snapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        const dateStr = d.createdAt ? new Date(d.createdAt.seconds * 1000).toLocaleDateString() : "Pending";
+        const mName = d.paymentMethod || d.method || "Payout";
+        const reqAmt = d.requestedAmount !== undefined ? d.requestedAmount : d.amount;
+        const netAmt = d.netAmount !== undefined ? d.netAmount : (d.payableAmount || reqAmt);
+
+        const div = document.createElement("div");
+        div.className = "tx-item";
+        div.innerHTML = `
+          <div>
+            <div style="font-weight: 700;">${mName} • ৳ ${Number(reqAmt).toFixed(2)}</div>
+            <div style="color: var(--text-muted); font-size: 11px;">${dateStr} (Net: ৳ ${Number(netAmt).toFixed(2)})</div>
+          </div>
+          <span class="tx-badge tx-${d.status}">${d.status}</span>
+        `;
+        container.appendChild(div);
+      });
+    });
+
+    // Form Submission using Atomic Firestore Transaction (Saves all compatibility aliases)
+    document.getElementById("withdrawForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const amount = parseFloat(amountInput.value);
+      const payoutAccount = document.getElementById("payoutAccount").value.trim();
+
+      if (amount < minWithdrawal) {
+        alert(`Minimum withdrawal is ৳ ${minWithdrawal}`);
+        return;
+      }
+      if (amount > maxWithdrawal) {
+        alert(`Maximum withdrawal is ৳ ${maxWithdrawal}`);
+        return;
+      }
+      if (amount > userAvailableBalance) {
+        alert("Insufficient wallet balance.");
+        return;
+      }
+
+      const btn = document.getElementById("withdrawBtn");
+      btn.disabled = true;
+      btn.textContent = "Reserving balance...";
+
+      try {
+        const walletRef = doc(db, "wallets", currentUserId);
+        const withdrawalRef = doc(collection(db, "withdrawals"));
+        const uName = tg?.initDataUnsafe?.user?.first_name || "User";
+
+        await runTransaction(db, async (transaction) => {
+          const wDoc = await transaction.get(walletRef);
+          if (!wDoc.exists()) throw new Error("Wallet not initialized");
+          
+          const currentBal = wDoc.data().availableBalance || 0;
+          if (currentBal < amount) throw new Error("Insufficient balance during atomic commit.");
+
+          const fee = amount * (currentFeePercentage / 100);
+          const net = amount - fee;
+
+          transaction.update(walletRef, {
+            availableBalance: currentBal - amount,
+            reservedBalance: (wDoc.data().reservedBalance || 0) + amount
+          });
+
+          // Save both standard and alias fields for 100% Admin Panel compatibility
+          transaction.set(withdrawalRef, {
+            userId: currentUserId,
+            userName: uName,
+            amount: amount,
+            requestedAmount: amount,
+            feePercentage: currentFeePercentage,
+            feeAmount: fee,
+            fee: fee,
+            netAmount: net,
+            payableAmount: net,
+            paymentMethod: selectedMethod,
+            method: selectedMethod,
+            payoutAccount: payoutAccount,
+            account: payoutAccount,
+            status: "pending",
+            createdAt: serverTimestamp()
+          });
+        });
+
+        alert("Withdrawal request recorded! Awaiting admin dispatch.");
+        e.target.reset();
+        recalculateFee();
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "Failed to submit withdrawal.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Confirm & Request Payout";
+      }
+    });
+  </script>
+</body>
+</html>
