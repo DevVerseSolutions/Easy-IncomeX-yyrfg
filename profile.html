@@ -7,7 +7,7 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary-teal: #0ba381;
@@ -17,7 +17,7 @@
       --text-muted: #64748b;
       --safe-bottom: env(safe-area-inset-bottom, 16px);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: calc(85px + var(--safe-bottom)); }
     .header { background: #ffffff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
     .page-title { font-size: 17px; font-weight: 700; }
@@ -30,11 +30,87 @@
     .status-badge { display: inline-block; background: #dcfce7; color: #15803d; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 
     .card { background: #ffffff; border-radius: 20px; padding: 18px; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); }
-    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
     .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: var(--text-muted); }
     .info-val { font-weight: 700; }
+
+    /* Community Links Styling */
+    .community-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .comm-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 15px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .comm-btn:active {
+      transform: scale(0.98);
+      background: #f1f5f9;
+    }
+    .comm-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .comm-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .channel-icon {
+      background: linear-gradient(135deg, #0ba381 0%, #057a60 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(11, 163, 129, 0.25);
+    }
+    .group-icon {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .comm-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+    .comm-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .comm-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .channel-badge {
+      background: #e6f7f2;
+      color: #0ba381;
+    }
+    .group-badge {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
 
     /* Bottom Nav */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; height: 68px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: var(--safe-bottom); z-index: 900; }
@@ -70,6 +146,56 @@
       <div class="info-row">
         <span class="info-label">Invited By</span>
         <span class="info-val" id="profileReferrer">Direct Registration</span>
+      </div>
+    </div>
+
+    <!-- Official Community (Telegram Channel & Group) -->
+    <div class="card">
+      <div class="card-title">
+        <span>Official Community</span>
+        <span style="font-size:11px; font-weight:600; color:var(--primary-teal); background:#e6f7f2; padding:2px 8px; border-radius:12px;">অফিসিয়াল কমিউনিটি</span>
+      </div>
+      <div class="community-box">
+        <!-- Official Channel -->
+        <div class="comm-btn" id="btnTelegramChannel">
+          <div class="comm-left">
+            <div class="comm-icon channel-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-18 8.016a2.25 2.25 0 0 0 .126 4.148l4.58 1.484 1.7 5.28a1.5 1.5 0 0 0 2.454.582l3.18-2.615 4.887 3.593a2.25 2.25 0 0 0 3.535-1.408l3.136-16.5A2.25 2.25 0 0 0 21.198 2.433z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="comm-title">অফিসিয়াল চ্যানেল</div>
+              <div class="comm-desc">সকল আপডেট ও নোটিশ পেতে জয়েন করুন</div>
+            </div>
+          </div>
+          <div class="comm-badge channel-badge">
+            <span>জয়েন করুন</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+
+        <!-- Official Group -->
+        <div class="comm-btn" id="btnTelegramGroup">
+          <div class="comm-left">
+            <div class="comm-icon group-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="comm-title">অফিসিয়াল গ্রুপ</div>
+              <div class="comm-desc">সরাসরি আলোচনা ও সহায়তার জন্য জয়েন করুন</div>
+            </div>
+          </div>
+          <div class="comm-badge group-badge">
+            <span>জয়েন করুন</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -109,14 +235,14 @@
     import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
-  authDomain: "easy-incomex.firebaseapp.com",
-  projectId: "easy-incomex",
-  storageBucket: "easy-incomex.firebasestorage.app",
-  messagingSenderId: "783518185444",
-  appId: "1:783518185444:web:68dde7c163ff83d94279f1",
-  measurementId: "G-V63PKF0Q9N"
-};
+      apiKey: "AIzaSyDFJsftmikEsXNIGuvftREk-v0pP2kSAeM",
+      authDomain: "easy-incomex.firebaseapp.com",
+      projectId: "easy-incomex",
+      storageBucket: "easy-incomex.firebasestorage.app",
+      messagingSenderId: "783518185444",
+      appId: "1:783518185444:web:68dde7c163ff83d94279f1",
+      measurementId: "G-V63PKF0Q9N"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -125,6 +251,7 @@
     if (tg) tg.ready();
     const currentUserId = tg?.initDataUnsafe?.user?.id?.toString() || "demo_tg_user";
 
+    // Load User Data
     onSnapshot(doc(db, "users", currentUserId), (snap) => {
       if (snap.exists()) {
         const u = snap.data();
@@ -139,6 +266,49 @@
           document.getElementById("avatarBox").textContent = (u.displayName || "U").charAt(0).toUpperCase();
         }
       }
+    });
+
+    // Telegram Channel & Group Link Logic
+    let telegramChannelUrl = "";
+    let telegramGroupUrl = "";
+
+    const applyCommunityLinks = (data) => {
+      if (!data) return;
+      if (data.channelLink || data.telegramChannel) {
+        telegramChannelUrl = data.channelLink || data.telegramChannel;
+      }
+      if (data.groupLink || data.telegramGroup) {
+        telegramGroupUrl = data.groupLink || data.telegramGroup;
+      }
+    };
+
+    onSnapshot(doc(db, "settings", "community"), (snap) => {
+      if (snap.exists()) applyCommunityLinks(snap.data());
+    });
+    onSnapshot(doc(db, "settings", "global"), (snap) => {
+      if (snap.exists()) applyCommunityLinks(snap.data());
+    });
+
+    function navigateToTelegram(url) {
+      if (!url) {
+        alert("লিংকটি অ্যাডমিন প্যানেল থেকে সেট করা হয়নি!");
+        return;
+      }
+      if (window.Telegram?.WebApp?.openTelegramLink && (url.includes("t.me/") || url.startsWith("tg://"))) {
+        window.Telegram.WebApp.openTelegramLink(url);
+      } else if (window.Telegram?.WebApp?.openLink) {
+        window.Telegram.WebApp.openLink(url);
+      } else {
+        window.open(url, "_blank");
+      }
+    }
+
+    document.getElementById("btnTelegramChannel").addEventListener("click", () => {
+      navigateToTelegram(telegramChannelUrl);
+    });
+
+    document.getElementById("btnTelegramGroup").addEventListener("click", () => {
+      navigateToTelegram(telegramGroupUrl);
     });
   </script>
 </body>
