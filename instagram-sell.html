@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Instagram Sell - Easy IncomeX</title>
+  <title>Instagram Sell - NexoraX</title>
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -121,7 +121,7 @@
       margin-top: 14px;
     }
 
-    /* Admin Assigned Credential/Reference Box */
+    /* Admin Provided Password / Reference Display Box */
     .admin-reference-box {
       margin-top: 16px;
       background: #f8fafc;
@@ -367,11 +367,6 @@
           <input type="text" id="igUsername" class="form-input" placeholder="e.g. @yourusername" required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="associatedGmail">Associated Gmail / Contact Email</label>
-          <input type="email" id="associatedGmail" class="form-input" placeholder="e.g. yourname@gmail.com" required>
-        </div>
-
         <!-- Two-factor authentication Field -->
         <div class="form-group">
           <label class="form-label" for="twoFactorAuth">Two-factor authentication (2FA Code / Key)</label>
@@ -559,7 +554,7 @@
         div.innerHTML = `
           <div>
             <div class="history-title">${item.instagramUsername || "Instagram Account"}</div>
-            <div class="history-meta">${item.associatedEmail || ""} • ${dateStr}</div>
+            <div class="history-meta">${item.associatedEmail ? item.associatedEmail + ' • ' : ''}${dateStr}</div>
           </div>
           <span class="pill-badge pill-${item.status}">${item.status}</span>
         `;
@@ -572,7 +567,6 @@
       e.preventDefault();
 
       const igUsername = document.getElementById("igUsername").value.trim();
-      const associatedGmail = document.getElementById("associatedGmail").value.trim();
       const twoFactorAuth = document.getElementById("twoFactorAuth").value.trim();
       const accountPassword = document.getElementById("accountPassword").value.trim();
       const notes = document.getElementById("submissionDetails").value.trim();
@@ -586,7 +580,6 @@
           userId: currentUserId,
           serviceType: "instagram",
           instagramUsername: igUsername,
-          associatedEmail: associatedGmail,
           twoFactorAuth: twoFactorAuth,
           password: accountPassword,
           notes: notes,
