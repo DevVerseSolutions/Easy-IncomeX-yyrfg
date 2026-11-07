@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Gmail Sell - Easy IncomeX</title>
+  <title>Gmail Sell - NexoraX</title>
   
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -370,17 +370,6 @@
           <input type="email" id="gmailAddress" class="form-input" placeholder="e.g. yourname@gmail.com" required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="recoveryEmail">Recovery Email / Contact Email</label>
-          <input type="email" id="recoveryEmail" class="form-input" placeholder="e.g. recovery@gmail.com" required>
-        </div>
-
-        <!-- Two-factor authentication Field -->
-        <div class="form-group">
-          <label class="form-label" for="twoFactorAuth">Two-factor authentication (2FA / Backup Codes)</label>
-          <input type="text" id="twoFactorAuth" class="form-input" placeholder="Enter 8-digit backup codes or 2FA key" required>
-        </div>
-
         <!-- Account Password Field -->
         <div class="form-group">
           <label class="form-label" for="accountPassword">Account Password</label>
@@ -466,6 +455,7 @@
       appId: "1:783518185444:web:68dde7c163ff83d94279f1",
       measurementId: "G-V63PKF0Q9N"
     };
+
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -562,7 +552,7 @@
         div.innerHTML = `
           <div>
             <div class="history-title">${item.gmailAddress || "Gmail Account"}</div>
-            <div class="history-meta">${item.recoveryEmail || ""} • ${dateStr}</div>
+            <div class="history-meta">${item.recoveryEmail ? item.recoveryEmail + " • " : ""}${dateStr}</div>
           </div>
           <span class="pill-badge pill-${item.status}">${item.status}</span>
         `;
@@ -575,8 +565,6 @@
       e.preventDefault();
 
       const gmail = document.getElementById("gmailAddress").value.trim();
-      const recovery = document.getElementById("recoveryEmail").value.trim();
-      const twoFactorAuth = document.getElementById("twoFactorAuth").value.trim();
       const accountPassword = document.getElementById("accountPassword").value.trim();
       const notes = document.getElementById("submissionDetails").value.trim();
 
@@ -589,8 +577,6 @@
           userId: currentUserId,
           serviceType: "gmail",
           gmailAddress: gmail,
-          recoveryEmail: recovery,
-          twoFactorAuth: twoFactorAuth,
           password: accountPassword,
           notes: notes,
           status: "pending",
